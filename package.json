@@ -1,0 +1,56 @@
+{
+  "name": "vrps",
+  "version": "1.0.0",
+  "description": "VRPS Electron App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "build": "cd frontend && npm run build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "productName": "VRPS",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "**/*",
+      "!**/*.ts",
+      "!*.code-workspace",
+      "!OLD/",
+      "!README.md",
+      "!_CapacitorConfig.json",
+      "!_config.xml",
+      "!_ionic.config.json",
+      "!src/",
+      "!e2e/",
+      "!hooks/",
+      "!angular.json",
+      "!ionic.config.json",
+      "!tsconfig.json",
+      "!tslint.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/preload.js"
+    ],
+    "win": {
+      "icon": "assets/icons/main.jpg",
+      "target": [
+        "nsis"
+      ]
+    }
+  },
+  "author": "Ryan Painter",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.2",
+    "electron": "^26.3.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.6",
+    "typeorm": "^0.3.17"
+  }
+}
