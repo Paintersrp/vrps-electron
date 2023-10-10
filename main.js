@@ -4,7 +4,9 @@ const {
   protocol,
   clipboard,
   ipcMain,
+  screen,
 } = require("electron");
+const Store = require("electron-store");
 const path = require("node:path");
 
 const isDev = !app.isPackaged;
@@ -21,15 +23,26 @@ ipcMain.on("copy-to-clipboard", (event, text) => {
   clipboard.writeText(text);
 });
 
+const store = new Store();
+
 function createWindow() {
   protocol.handle("app", (request, callback) => {
     const url = request.url.substr(7);
     callback({ path: path.normalize(`${__dirname}/${url}`) });
   });
 
+  const screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+  const screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+  const winWidth = Math.floor(screenWidth * 0.75);
+  const winHeight = Math.floor(screenHeight * 0.85);
+
+  const winBounds = store.get("winBounds", {
+    width: winWidth,
+    height: winHeight,
+  });
+
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    ...winBounds,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -40,8 +53,11 @@ function createWindow() {
 
   win.setMenuBarVisibility(false);
   win.loadFile(servePath);
-
   // win.webContents.openDevTools();
+
+  win.on("close", () => {
+    store.set("winBounds", win.getBounds());
+  });
 }
 
 app.whenReady().then(createWindow);
